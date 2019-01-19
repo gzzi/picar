@@ -11,6 +11,7 @@ add_executable( picar
 
   src/main.cpp
   src/gpio.cpp
+  src/motor.cpp
 )
 
 target_include_directories( picar

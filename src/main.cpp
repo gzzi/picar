@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "joystick/joystick.hh"
 #include "src/gpio.hpp"
+#include "src/motor.hpp"
 
 
 int main(int argc, char** argv) {
@@ -21,7 +22,19 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-  while (true)
+  GPIO standby(9);
+  if(!standby.Init(GPIO::Direction::OUT, true))
+  {
+    std::cerr << "open led failed (root?)" << std::endl;
+    exit(1);
+  }
+  standby.Write(false);
+
+  Motor left(19, 26, 12);
+  Motor right(6, 5, 13);
+
+  bool exit_loop = false;
+  do
   {
     // Restrict rate
     usleep(1000);
@@ -36,15 +49,46 @@ int main(int argc, char** argv) {
         event.number,
         event.value == 0 ? "up" : "down");
 
-        if(event.number==12) { // triangle
-          led.Write(event.value == 0);
-        }
+        switch(event.number)
+	{
+	case 12: // triangle
+	  led.Write(event.value == 0);
+	  break;
+
+	case 13: // round
+	  exit_loop = event.value;
+	  break;
+
+	case 9: // forward gachette
+	case 4: // forward
+	case 14: // cross
+	  if(event.value == 1) {
+	    left.SetTork(0);
+	    right.SetTork(0);
+	  }
+	  else {
+	    left.SetTork(-1);
+	    right.SetTork(1);
+	  }
+	  break;
+
+	case 15: // square -> reverse
+	  if(event.value == 1) {
+	    left.SetTork(0);
+	    right.SetTork(0);
+	  }
+	  else {
+	    left.SetTork(1);
+	    right.SetTork(-1);
+	  }
+	  break;
+	}
       }
       else if (event.isAxis())
       {
         //printf("Axis %u is at position %d\n", event.number, event.value);
       }
     }
-  }
+  }while(! exit_loop );
   return 0;
 }

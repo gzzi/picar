@@ -1,4 +1,7 @@
 
+#ifndef GPIO_HPP
+#define GPIO_HPP
+
 // Raspberry pi GPIO driver
 #include <string>
 
@@ -28,3 +31,5 @@ public:
   bool Init(Direction pin_dir, bool active_low=false);
   void Write(bool val);
 };
+
+#endif
