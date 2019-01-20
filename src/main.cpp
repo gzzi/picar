@@ -5,6 +5,11 @@
 #include "src/gpio.hpp"
 #include "src/motor.hpp"
 
+typedef enum
+{
+  UP = 0,
+  DOWN = 1
+}EVENT;
 
 int main(int argc, char** argv) {
   const char* js_path = "/dev/input/js0";
@@ -47,12 +52,12 @@ int main(int argc, char** argv) {
       {
         printf("Button %u is %s\n",
         event.number,
-        event.value == 0 ? "up" : "down");
+        event.value == EVENT::UP ? "up" : "down");
 
         switch(event.number)
 	{
 	case 12: // triangle
-	  led.Write(event.value == 0);
+	  led.Write(event.value == EVENT::UP);
 	  break;
 
 	case 13: // round
@@ -62,7 +67,7 @@ int main(int argc, char** argv) {
 	case 9: // forward gachette
 	case 4: // forward
 	case 14: // cross
-	  if(event.value == 1) {
+	  if(event.value == EVENT::UP) {
 	    left.SetTork(0);
 	    right.SetTork(0);
 	  }
@@ -73,7 +78,7 @@ int main(int argc, char** argv) {
 	  break;
 
 	case 15: // square -> reverse
-	  if(event.value == 1) {
+	  if(event.value == EVENT::UP) {
 	    left.SetTork(0);
 	    right.SetTork(0);
 	  }

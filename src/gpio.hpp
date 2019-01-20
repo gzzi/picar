@@ -2,14 +2,15 @@
 #ifndef GPIO_HPP
 #define GPIO_HPP
 
-// Raspberry pi GPIO driver
 #include <string>
+#include <fstream>
 
 class GPIO
 {
 private:
   const unsigned m_number;
   std::string m_path;
+  std::ofstream m_value;
   bool m_active_low;
 
   bool Unexport(bool force=false);
