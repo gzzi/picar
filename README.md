@@ -10,7 +10,7 @@ test with
 jstest /dev/input/js0
 ```
 
-# The raspberry pi custom hat
+# Raspberry pi custom hat
 
 ## Pinout
 
@@ -37,4 +37,16 @@ jstest /dev/input/js0
   - [SparkFun Dual Motor Driver](https://www.sparkfun.com/products/14450)
   - veroboard, headers, ...
 
-# The app
+# App
+
+## Depend
+
+It use [a c++ joysitck library](https://github.com/drewnoakes/joystick) as submodule.
+
+## Compile
+
+Run
+
+```
+./build.sh
+```
