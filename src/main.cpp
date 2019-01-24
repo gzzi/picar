@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
   }
   standby.Write(false);
 
-  Motor left(19, 26, 12);
-  Motor right(6, 5, 13);
+  Motor left(26, 19, 26);
+  Motor right(6, 5, 23);
 
   bool exit_loop = false;
   do
@@ -55,43 +55,53 @@ int main(int argc, char** argv) {
         event.value == EVENT::UP ? "up" : "down");
 
         switch(event.number)
-	{
-	case 12: // triangle
-	  led.Write(event.value == EVENT::UP);
-	  break;
+        {
+        case 12: // triangle
+          led.Write(event.value == EVENT::UP);
+          break;
 
-	case 13: // round
-	  exit_loop = event.value;
-	  break;
+        case 13: // round
+          exit_loop = event.value;
+          break;
 
-	case 9: // forward gachette
-	case 4: // forward
-	case 14: // cross
-	  if(event.value == EVENT::UP) {
-	    left.SetTork(0);
-	    right.SetTork(0);
-	  }
-	  else {
-	    left.SetTork(-1);
-	    right.SetTork(1);
-	  }
-	  break;
+	//case 9: // forward gachette
+        case 4: // forward
+        case 14: // cross
+          if(event.value == EVENT::UP) {
+            left.SetTork(0);
+            right.SetTork(0);
+          }
+          else {
+            left.SetTork(INT16_MIN);
+            right.SetTork(INT16_MAX);
+          }
+          break;
 
-	case 15: // square -> reverse
-	  if(event.value == EVENT::UP) {
-	    left.SetTork(0);
-	    right.SetTork(0);
-	  }
-	  else {
-	    left.SetTork(1);
-	    right.SetTork(-1);
-	  }
-	  break;
-	}
+        case 15: // square -> reverse
+          if(event.value == EVENT::UP) {
+            left.SetTork(0);
+            right.SetTork(0);
+          }
+          else {
+            left.SetTork(INT16_MAX);
+            right.SetTork(INT16_MIN);
+          }
+          break;
+        }
       }
       else if (event.isAxis())
       {
         //printf("Axis %u is at position %d\n", event.number, event.value);
+
+	if(event.number==13) { // right gachette
+	  printf("Axis %u is at position %d\n", event.number, event.value);
+	  int16_t tork = event.value;
+	  tork >>= 1;
+	  tork += INT16_MAX / 2;
+	  left.SetTork(-tork);
+	  right.SetTork(tork);
+	}
+	
       }
     }
   }while(! exit_loop );

@@ -3,13 +3,14 @@
 #define MOTOR_HPP
 
 #include "gpio.hpp"
+#include "pwm.hpp"
 
 class Motor
 {
 private:
   GPIO m_in1;
   GPIO m_in2;
-  GPIO m_pwm;
+  PWM m_pwm;
 
   enum class OutMode
   {
@@ -29,7 +30,7 @@ public:
   Motor(Motor const&) = delete;
   Motor(Motor &&) = default;
 
-  Motor(unsigned pin_in1, unsigned pin_in2, unsigned pin_pwm);
+  Motor(unsigned pin_in1, unsigned pin_in2, unsigned pin_wiring_pi_pwm);
 
   void SetTork(int16_t tork); // >0 CW, <0 CCW
 };

@@ -1,4 +1,5 @@
 
+#include <cstdint>
 #include "motor.hpp"
 
 Motor::~Motor()
@@ -13,7 +14,7 @@ Motor::Motor(unsigned pin_in1, unsigned pin_in2, unsigned pin_pwm):
 {
   m_in1.Init(GPIO::Direction::OUT);
   m_in2.Init(GPIO::Direction::OUT);
-  m_pwm.Init(GPIO::Direction::OUT);
+  m_pwm.Init();
   ApplyMode(OutMode::STOP);
 }
 
@@ -24,9 +25,14 @@ void Motor::SetTork(int16_t tork)
   }
   else if(tork > 0) {
     ApplyMode(OutMode::CW);
+    m_pwm.Write(tork*2);
   }
   else {
     ApplyMode(OutMode::CCW);
+    if(tork == INT16_MIN)
+      tork++;
+    tork = -tork;
+    m_pwm.Write(tork*2);
   }
 }
 
@@ -37,25 +43,22 @@ void Motor::ApplyMode(OutMode mode)
   case OutMode::STOP:
     m_in1.Write(false);
     m_in2.Write(false);
-    m_pwm.Write(true);
+    m_pwm.Write(UINT16_MAX);
     break;
 
   case OutMode::OPEN:
     m_in1.Write(true);
     m_in2.Write(true);
-    m_pwm.Write(true);
     break;
 
   case OutMode::CW:
     m_in1.Write(true);
     m_in2.Write(false);
-    m_pwm.Write(true);
     break;
 
   case OutMode::CCW:
     m_in1.Write(false);
     m_in2.Write(true);
-    m_pwm.Write(true);
     break;
   }
 }

@@ -45,8 +45,21 @@ It use [a c++ joysitck library](https://github.com/drewnoakes/joystick) as submo
 
 ## Compile
 
-Run
+This application need wiring pi library. It need to be installed first using:
+
+```
+sudo apt-get install wiringpi
+```
+
+Then to compile:
 
 ```
 ./build.sh
 ```
+
+Due to wiringPi it need to be root
+
+```
+sudo ./build/picar
+```
+
