@@ -23,7 +23,6 @@ private:
   void ApplyMode(OutMode mode);
 
 public:
-
   virtual ~Motor();
 
   Motor() = delete;

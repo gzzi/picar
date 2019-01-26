@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "joystick/joystick.hh"
 #include "src/gpio.hpp"
-#include "src/motor.hpp"
+#include "src/car.hpp"
 
 typedef enum
 {
@@ -35,8 +35,9 @@ int main(int argc, char** argv) {
   }
   standby.Write(false);
 
-  Motor left(26, 19, 26);
-  Motor right(6, 5, 23);
+  Motor _left(26, 19, 26);
+  Motor _right(6, 5, 23);
+  Car car(_left, _right);
 
   bool exit_loop = false;
   do
@@ -68,23 +69,19 @@ int main(int argc, char** argv) {
         case 4: // forward
         case 14: // cross
           if(event.value == EVENT::UP) {
-            left.SetTork(0);
-            right.SetTork(0);
+            car.SetTork(0);
           }
           else {
-            left.SetTork(INT16_MIN);
-            right.SetTork(INT16_MAX);
+	    car.SetTork(INT16_MAX);
           }
           break;
 
         case 15: // square -> reverse
           if(event.value == EVENT::UP) {
-            left.SetTork(0);
-            right.SetTork(0);
+            car.SetTork(0);
           }
           else {
-            left.SetTork(INT16_MAX);
-            right.SetTork(INT16_MIN);
+            car.SetTork(INT16_MIN);
           }
           break;
         }
@@ -96,12 +93,16 @@ int main(int argc, char** argv) {
 	if(event.number==13) { // right gachette
 	  printf("Axis %u is at position %d\n", event.number, event.value);
 	  int16_t tork = event.value;
+
+	  // convert from -32k..32k to 0..32k
 	  tork >>= 1;
 	  tork += INT16_MAX / 2;
-	  left.SetTork(-tork);
-	  right.SetTork(tork);
+
+	  car.SetTork(tork);
 	}
-	
+	else if(event.number==0) {
+	  car.SetDirection(event.value);
+	}
       }
     }
   }while(! exit_loop );
